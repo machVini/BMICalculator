@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BMI Math</string>
+    <string name="toolbar_lable">BMI Calculator</string>
+    <string name="weight_label">Weight (kg)</string>
+    <string name="height_label">Height (m)</string>
+    <string name="calculate_button">Calculate BMI</string>
+    <string name="imc_result">BMI: %1$s</string>
+    <string name="imc_classification">Classification: %1$s</string>
+    <string name="close">Close</string>
+
+    <!-- Classifications -->
+    <string name="underweight">Underweight</string>
+    <string name="normal_weight">Normal weight</string>
+    <string name="overweight">Overweight</string>
+    <string name="obesity_1">Obesity class I</string>
+    <string name="obesity_2">Obesity class II</string>
+    <string name="obesity_3">Obesity class III</string>
+
+    <!-- Format error message -->
+    <string name="invalid_format_error">Invalid format! Use period or comma for decimal.</string>
+
+    <!-- BMI information -->
+    <string name="bmi_classification">BMI Index</string>
+    <string name="bmi_info">
+        &#160;&lt; 18.5: Underweight\n
+        ≥ 18.5 &lt; 24.9: Normal weight\n
+        ≥ 25 &lt; 29.9: Overweight\n
+        ≥ 30 &lt; 34.9: Obesity class I\n
+        ≥ 35 &lt; 39.9: Obesity class II\n
+        ≥ 40: Obesity class III
+    </string>
+</resources>
