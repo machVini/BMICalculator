@@ -1,193 +1,128 @@
 package com.mach.apps.imccalculatorapp.android.ui
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.mach.apps.imccalculatorapp.IMCCalculator
-import com.mach.apps.imccalculatorapp.NORMAL_WEIGHT
-import com.mach.apps.imccalculatorapp.OBESITY_1
-import com.mach.apps.imccalculatorapp.OBESITY_2
-import com.mach.apps.imccalculatorapp.OVERWEIGHT
-import com.mach.apps.imccalculatorapp.UNDERWEIGHT
+import androidx.compose.ui.unit.sp
 import com.mach.apps.imccalculatorapp.android.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun IMCScreen() {
-    var weight by remember { mutableStateOf("") }
-    var height by remember { mutableStateOf("") }
-    var imcResult by remember { mutableStateOf<Double?>(null) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
-    var classificationKey by remember { mutableStateOf<String?>(null) }
+fun IMCScreen(
+    uiState: BMIViewModel.UiState,
+    onWeightChange: (String) -> Unit,
+    onHeightChange: (String) -> Unit,
+    onCalculateClick: () -> Unit,
+    onHistoryClick: () -> Unit,
+    onTipsClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Brush.verticalGradient(colors = listOf(Color(0xFF4A90E2), Color(0xFF1453A3))))
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
 
-    val calculator = remember { IMCCalculator() }
-    val context = LocalContext.current
-    var showInfoDialog by remember { mutableStateOf(false) }
+        Spacer(modifier = Modifier.height(16.dp))
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.toolbar_lable)) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.primary,
-                    actionIconContentColor = MaterialTheme.colorScheme.primary
-                ),
-                actions = {
-                    IconButton(onClick = { showInfoDialog = true }) {
-                        Icon(Icons.Filled.Info, contentDescription = "Info")
-                    }
-                }
+        Text(
+            text = stringResource(R.string.toolbar_lable),
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+
+        Icon(
+            painter = painterResource(id = R.drawable.logo),
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier.size(100.dp)
+        )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White, shape = RoundedCornerShape(16.dp))
+                .padding(20.dp)
+        ) {
+            OutlinedTextField(
+                value = uiState.weight,
+                onValueChange = onWeightChange,
+                label = { Text("Peso (kg)") },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
             )
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = uiState.height,
+                onValueChange = onHeightChange,
+                label = { Text("Altura (cm)") },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                onClick = onCalculateClick,
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
             ) {
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.logo),
-                        contentDescription = stringResource(R.string.toolbar_lable),
-                        modifier = Modifier.size(150.dp),
-                        alignment = Alignment.Center
-                    )
-                }
-
-                OutlinedTextField(
-                    value = weight,
-                    onValueChange = { weight = it },
-                    label = { Text(stringResource(R.string.weight_label)) },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                OutlinedTextField(
-                    value = height,
-                    onValueChange = { height = it },
-                    label = { Text(stringResource(R.string.height_label)) },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Button(
-                    onClick = {
-                        val w = parseInput(weight)
-                        val h = parseInput(height)
-                        if (w != null && h != null && h > 0.0) {
-                            val result = calculator.calculate(h, w)
-                            imcResult = result
-                            classificationKey = calculator.classify(result)
-                            errorMessage = null
-                        } else {
-                            errorMessage = context.getString(R.string.invalid_format_error)
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(stringResource(R.string.calculate_button))
-                }
-
-                errorMessage?.let {
-                    Text(text = it, color = MaterialTheme.colorScheme.error)
-                }
-
-                imcResult?.let { imc ->
-                    classificationKey?.let { key ->
-                        val classificationResId = when (key) {
-                            UNDERWEIGHT -> R.string.underweight
-                            NORMAL_WEIGHT -> R.string.normal_weight
-                            OVERWEIGHT -> R.string.overweight
-                            OBESITY_1 -> R.string.obesity_1
-                            OBESITY_2 -> R.string.obesity_2
-                            else -> R.string.obesity_3
-                        }
-
-                        Text(text = stringResource(R.string.imc_result, String.format("%.2f", imc)))
-                        Text(
-                            text = stringResource(
-                                R.string.imc_classification,
-                                stringResource(classificationResId)
-                            )
-                        )
-                    }
-                }
+                Text("Calcular IMC")
             }
-            if (showInfoDialog) {
-                InfoDialog(onDismiss = { showInfoDialog = false })
-            }
-        },
-        bottomBar = {
-            AdBanner()
-        }
-    )
-}
 
-@Composable
-fun InfoDialog(onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.bmi_classification)) },
-        text = {
-            Text(text = stringResource(R.string.bmi_info))
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(R.string.close))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (uiState.bmiResult.isNotEmpty()) {
+                Text(
+                    text = "Seu IMC é: ${uiState.bmiResult}",
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF1453A3),
+                    fontSize = 18.sp,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
             }
         }
-    )
-}
 
-private fun parseInput(input: String): Double? {
-    val sanitizedInput = input.replace(",", ".")
-    return sanitizedInput.toDoubleOrNull()
+        Row (
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            OutlinedButton(onClick = onHistoryClick) {
+                Text("Histórico")
+            }
+            OutlinedButton(onClick = onTipsClick) {
+                Text("Dicas")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+    }
 }
