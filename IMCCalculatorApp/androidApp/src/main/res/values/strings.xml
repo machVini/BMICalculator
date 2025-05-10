@@ -5,8 +5,7 @@
     <string name="weight_label">Peso (kg)</string>
     <string name="height_label">Altura (m)</string>
     <string name="calculate_button">Calcular IMC</string>
-    <string name="imc_result">IMC: %1$s</string>
-    <string name="imc_classification">Classificação: %1$s</string>
+    <string name="imc_classification">Seu IMC é: %1$.1f</string>
     <string name="close">Fechar</string>
 
     <!-- Classificações -->
@@ -18,17 +17,6 @@
     <string name="obesity_3">Obesidade grau III</string>
 
     <!-- Mensagem de erro de formato -->
-    <string name="invalid_format_error">Formato inválido! Use ponto ou vírgula para decimal.</string>
-
-    <!-- BMI information -->
-    <string name="bmi_classification">Classificação IMC</string>
-    <string name="bmi_info">
-        &#160;&lt; 18,5: Abaixo do peso\n
-        ≥ 18,5 e &lt; 24,9: Peso normal\n
-        ≥ 25 e &lt; 29,9: Sobrepeso\n
-        ≥ 30 e &lt; 34,9: Obesidade grau 1\n
-        ≥ 35 e &lt; 39,9: Obesidade grau 2\n
-        ≥ 40: Obesidade grau 3
-    </string>
+    <string name="error_invalid_input">Por favor, insira valores válidos</string>
 
 </resources>
