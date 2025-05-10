@@ -12,10 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropUp
@@ -28,18 +28,26 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mach.apps.imccalculatorapp.android.R
@@ -50,6 +58,13 @@ fun BMIScreen(
     action: (BMIViewModel.Action) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(Unit) {
+        focusManager.clearFocus(force = true)
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.fillMaxSize()) {
             Box(
@@ -86,8 +101,10 @@ fun BMIScreen(
                 Icon(
                     painter = painterResource(R.drawable.ic_logo),
                     contentDescription = null,
-                    modifier = Modifier.size(128.dp),
-                    tint = Color(0xFFFBFBFB)
+                    modifier = Modifier.size(192.dp),
+                    tint = uiState.categoryColor?.let { color ->
+                        colorResource(id = color)
+                    } ?: Color(0xFFFBFBFB)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Card(
@@ -103,8 +120,11 @@ fun BMIScreen(
                                 action.invoke(BMIViewModel.Action.UpdateWeight(weight))
                             },
                             label = { Text(stringResource(R.string.weight_label)) },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                            modifier = Modifier.fillMaxWidth()
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Next
+                            ),
+                            modifier = Modifier.fillMaxWidth(),
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         OutlinedTextField(
@@ -113,7 +133,16 @@ fun BMIScreen(
                                 action.invoke(BMIViewModel.Action.UpdateHeight(height))
                             },
                             label = { Text(stringResource(R.string.height_label)) },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    action.invoke(BMIViewModel.Action.Calculate)
+                                    keyboardController?.hide()
+                                }
+                            ),
                             modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(12.dp))
@@ -160,14 +189,18 @@ fun BMIScreen(
 }
 
 @Composable
-fun BmiScaleIndicator(imc: Float, totalWidth: Dp = 300.dp) {
+fun BmiScaleIndicator(imc: Float) {
     val position = calculateImcPosition(imc)
     val density = LocalDensity.current
+    var totalWidth by remember { mutableStateOf(0) }
 
     Box(
         modifier = Modifier
-            .width(totalWidth)
+            .fillMaxWidth()
             .wrapContentHeight()
+            .onGloballyPositioned { layoutCoordinates ->
+                totalWidth = layoutCoordinates.size.width
+            }
     ) {
         Row(
             Modifier
@@ -180,7 +213,7 @@ fun BmiScaleIndicator(imc: Float, totalWidth: Dp = 300.dp) {
                     Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .background(colorForSegment(index))
+                        .background(colorResource(colorIdForSegment(index)))
                 )
             }
         }
@@ -191,7 +224,7 @@ fun BmiScaleIndicator(imc: Float, totalWidth: Dp = 300.dp) {
                 .wrapContentWidth(Alignment.Start)
         ) {
             with(density) {
-                val offsetPx = (position * totalWidth.toPx()).toDp()
+                val offsetPx = (position * totalWidth).toDp()
                 Icon(
                     Icons.Default.ArrowDropUp,
                     contentDescription = null,
@@ -220,11 +253,11 @@ private fun calculateImcPosition(imc: Float): Float {
     return 0.98f
 }
 
-private fun colorForSegment(index: Int): Color {
+private fun colorIdForSegment(index: Int): Int {
     return when (index) {
-        0 -> Color(0xFF4FC3F7)
-        1 -> Color(0xFF81C784)
-        2 -> Color(0xFFFFF176)
-        else -> Color(0xFFE57373)
+        0 -> R.color.underweight
+        1 -> R.color.normal_weight
+        2 -> R.color.overweight
+        else -> R.color.obesity_1
     }
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="underweight">#4FC3F7</color>
-    <color name="normal_weight">#81C784</color>
-    <color name="overweight">#FFF176</color>
-    <color name="obesity_1">#E57373</color>
-    <color name="obesity_2">#E57373</color>
-    <color name="obesity_3">#E57373</color>
+    <color name="underweight">#1976D2</color>
+    <color name="normal_weight">#009688</color>
+    <color name="overweight">#FFEB3B</color>
+    <color name="obesity_1">#DB1304</color>
+    <color name="obesity_2">#DB1304</color>
+    <color name="obesity_3">#DB1304</color>
 </resources>
