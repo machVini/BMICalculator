@@ -35,34 +35,22 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            IMCCalculatorAppTheme {
+            BMICalculatorAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val uiState by viewModel.uiState.collectAsState()
-                    IMCScreen(
+                    BMIScreen(
                         uiState = uiState,
-                        onWeightChange = { weight ->
-                            viewModel.performAction(BMIViewModel.Action.UpdateWeight(weight))
-                        },
-                        onHeightChange = { height ->
-                            viewModel.performAction(BMIViewModel.Action.UpdateHeight(height))
-                        },
-                        onCalculateClick = {
-                            viewModel.performAction(BMIViewModel.Action.Calculate)
-                        },
-                        onHistoryClick = {
-                            viewModel.performAction(BMIViewModel.Action.NavigateToHistory)
-                        },
-                        onTipsClick = {
-                            viewModel.performAction(BMIViewModel.Action.NavigateToTips)
-                        }
+                        action = ::performAction,
                     )
                 }
             }
         }
     }
+
+    private fun performAction(action: BMIViewModel.Action) = viewModel.performAction(action)
 
     private fun handleEvent(event: BMIViewModel.Event) {
         when (event) {
@@ -70,14 +58,17 @@ class MainActivity : ComponentActivity() {
                 // Aqui você pode mostrar um toast ou um snackbar com o resultado
                 // O resultado já estará atualizado no uiState
             }
+
             is BMIViewModel.Event.NavigateToHistoryScreen -> {
                 // Implementar navegação para a tela de histórico
                 // Por exemplo: startActivity(Intent(this, HistoryActivity::class.java))
             }
+
             is BMIViewModel.Event.NavigateToTipsScreen -> {
                 // Implementar navegação para a tela de dicas
                 // Por exemplo: startActivity(Intent(this, TipsActivity::class.java))
             }
+
             is BMIViewModel.Event.ShowError -> {
                 Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show()
             }
@@ -88,14 +79,10 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun DefaultPreview() {
-    IMCCalculatorAppTheme {
-        IMCScreen(
+    BMICalculatorAppTheme {
+        BMIScreen(
             uiState = BMIViewModel.UiState(),
-            onWeightChange = {},
-            onHeightChange = {},
-            onCalculateClick = {},
-            onHistoryClick = {},
-            onTipsClick = {}
+            action = {},
         )
     }
 }

@@ -65,34 +65,28 @@ class BMIViewModel @Inject constructor(
                 val height = _uiState.value.height.toDoubleOrNull()
 
                 if (weight == null || height == null) {
-                    _events.emit(Event.ShowError("Por favor, insira valores válidos"))
+                    _events.emit(Event.ShowError(resources.getString(R.string.error_invalid_input)))
                     return@launch
                 }
 
-                // Convert height from cm to meters
                 val heightInMeters = height / 100
 
-                // Use o IMCCalculator do módulo shared para calcular o IMC
                 val bmi = imcCalculator.calculate(heightInMeters, weight)
                 val roundedBmi = round(bmi * 10) / 10
-
-                // Use o método classify do IMCCalculator para obter a categoria
                 val categoryCode = imcCalculator.classify(bmi)
 
-                // Converta o código da categoria para texto legível
                 val category = translateCategory(categoryCode)
 
                 _uiState.update { currentState ->
                     currentState.copy(
-                        bmi = roundedBmi.toString(),
+                        bmi = roundedBmi.toFloat(),
                         bmiCategory = category,
-                        bmiResult = "$roundedBmi - $category"
+                        categoryColor = getCategoryColor(categoryCode)
                     )
                 }
 
                 _events.emit(Event.ShowResult(roundedBmi.toString(), category))
 
-                // Aqui você poderia salvar o resultado no histórico
                 saveToHistory(roundedBmi, category)
             } catch (e: IllegalArgumentException) {
                 _events.emit(Event.ShowError("Erro: ${e.message}"))
@@ -111,6 +105,15 @@ class BMIViewModel @Inject constructor(
             OBESITY_2 -> resources.getString(R.string.obesity_2)
             OBESITY_3 -> resources.getString(R.string.obesity_3)
             else -> ""
+        }
+    }
+
+    private fun getCategoryColor(categoryCode: String): Int {
+        return when (categoryCode) {
+            UNDERWEIGHT -> R.color.underweight
+            NORMAL_WEIGHT -> R.color.normal_weight
+            OVERWEIGHT -> R.color.overweight
+            else -> R.color.obesity_1
         }
     }
 
@@ -145,8 +148,8 @@ class BMIViewModel @Inject constructor(
     data class UiState(
         val weight: String = "",
         val height: String = "",
-        val bmi: String = "",
+        val bmi: Float? = null,
         val bmiCategory: String = "",
-        val bmiResult: String = ""
+        val categoryColor: Int? = null,
     )
 }
