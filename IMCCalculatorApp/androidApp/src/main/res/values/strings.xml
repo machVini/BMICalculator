@@ -16,7 +16,37 @@
     <string name="obesity_2">Obesidade grau II</string>
     <string name="obesity_3">Obesidade grau III</string>
 
-    <!-- Mensagem de erro de formato -->
+    <!-- Mensagem de erro -->
     <string name="error_invalid_input">Por favor, insira valores válidos</string>
+    <string name="calculating_error">Ocorreu um erro ao calcular o IMC</string>
+
+    <!-- Navegação -->
+    <string name="nav_home">Início</string>
+    <string name="nav_history">Histórico</string>
+    <string name="nav_tips">Dicas</string>
+
+    <!-- Títulos das telas -->
+    <string name="history_screen_title">Histórico de IMC</string>
+    <string name="tips_screen_title">Dicas de Saúde</string>
+
+    <string name="no_history_available">Sem histórico disponível</string>
+    <string name="bmi_label">IMC:</string>
+
+    <string name="january">Jan</string>
+    <string name="february">Fev</string>
+    <string name="march">Mar</string>
+    <string name="april">Abr</string>
+    <string name="may">Mai</string>
+    <string name="june">Jun</string>
+    <string name="july">Jul</string>
+    <string name="august">Ago</string>
+    <string name="september">Set</string>
+    <string name="october">Out</string>
+    <string name="november">Nov</string>
+    <string name="december">Dez</string>
+
+    <string name="date_pattern">dd MMMM, yyyy</string>
+    <string name="ad_banner_button_text">Bom Trabalho!</string>
+
 
 </resources>

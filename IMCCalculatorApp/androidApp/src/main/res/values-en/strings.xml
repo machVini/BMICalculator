@@ -3,7 +3,7 @@
     <string name="app_name">BMI Math</string>
     <string name="toolbar_lable">BMI Calculator</string>
     <string name="weight_label">Weight (kg)</string>
-    <string name="height_label">Height (m)</string>
+    <string name="height_label">Height (cm)</string>
     <string name="calculate_button">Calculate BMI</string>
     <string name="imc_classification">Your BMI is: %1$.1f</string>
     <string name="close">Close</string>
@@ -18,4 +18,34 @@
 
     <!-- Format error message -->
     <string name="error_invalid_input">Please, insert valid values</string>
+    <string name="calculating_error">Error calculating BMI</string>
+
+    <!-- Navegação -->
+    <string name="nav_home">Home</string>
+    <string name="nav_history">History</string>
+    <string name="nav_tips">Tips</string>
+
+    <!-- Títulos das telas -->
+    <string name="history_screen_title">BMI History</string>
+    <string name="tips_screen_title">Health Tips</string>
+
+    <string name="no_history_available">No history available</string>
+    <string name="bmi_label">BMI:</string>
+
+    <string name="january">Jan</string>
+    <string name="february">Feb</string>
+    <string name="march">Mar</string>
+    <string name="april">Apr</string>
+    <string name="may">May</string>
+    <string name="june">Jun</string>
+    <string name="july">Jul</string>
+    <string name="august">Aug</string>
+    <string name="september">Sep</string>
+    <string name="october">Oct</string>
+    <string name="november">Nov</string>
+    <string name="december">Dec</string>
+
+    <string name="date_pattern">MM dd yyyy</string>
+
+    <string name="ad_banner_button_text">Nice Job!</string>
 </resources>

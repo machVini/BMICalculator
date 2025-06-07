@@ -1,4 +1,4 @@
-package com.mach.apps.imccalculatorapp.android.ui
+package com.mach.apps.imccalculatorapp.android.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -70,118 +71,126 @@ fun BMIScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.40f)
-                    .background(Color(0xFF8DCEFA))
+                    .fillMaxHeight(0.5f)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
             )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
-                    .background(Color(0xFFFBFBFB))
+                    .background(MaterialTheme.colorScheme.background)
             )
         }
 
         Scaffold(
+            topBar = {
+                CustomTopAppBar(
+                    title = stringResource(R.string.toolbar_lable),
+                    modifier = modifier
+                )
+            },
             containerColor = Color.Transparent,
-            bottomBar = { AdBanner() }
+            bottomBar = {
+                AdBanner(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 4.dp)
+                )
+            }
         ) { padding ->
-            Column(
+            LazyColumn(
                 modifier = modifier
                     .fillMaxSize()
                     .padding(padding)
-                    .padding(vertical = 16.dp, horizontal = 24.dp),
+                    .padding(horizontal = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(
-                    text = stringResource(R.string.toolbar_lable),
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Icon(
-                    painter = painterResource(R.drawable.ic_logo),
-                    contentDescription = null,
-                    modifier = Modifier.size(192.dp),
-                    tint = uiState.categoryColor?.let { color ->
-                        colorResource(id = color)
-                    } ?: Color(0xFFFBFBFB)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Card(
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = Color(0XFFFDFDFD)),
-                    elevation = CardDefaults.cardElevation(5.dp),
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        OutlinedTextField(
-                            value = uiState.weight,
-                            onValueChange = { weight ->
-                                action.invoke(BMIViewModel.Action.UpdateWeight(weight))
-                            },
-                            label = { Text(stringResource(R.string.weight_label)) },
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                keyboardType = KeyboardType.Number,
-                                imeAction = ImeAction.Next
-                            ),
-                            modifier = Modifier.fillMaxWidth(),
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        OutlinedTextField(
-                            value = uiState.height,
-                            onValueChange = { height ->
-                                action.invoke(BMIViewModel.Action.UpdateHeight(height))
-                            },
-                            label = { Text(stringResource(R.string.height_label)) },
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                keyboardType = KeyboardType.Number,
-                                imeAction = ImeAction.Done
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
-                                    action.invoke(BMIViewModel.Action.Calculate)
-                                    keyboardController?.hide()
-                                }
-                            ),
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            onClick = {
-                                action.invoke(BMIViewModel.Action.Calculate)
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(5.dp)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.calculate_button),
-                                fontSize = 16.sp
-                            )
-                        }
-
-                        uiState.bmi?.let {
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Text(
-                                text = stringResource(R.string.imc_classification).format(it),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
+                item {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_logo),
+                        contentDescription = null,
+                        modifier = Modifier.size(148.dp),
+                        tint = uiState.categoryColor?.let { color ->
+                            colorResource(id = color)
+                        } ?: Color(0xFFFBFBFB)
+                    )
+                    Card(
+                        shape = RoundedCornerShape(16.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
+                        elevation = CardDefaults.cardElevation(5.dp),
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            OutlinedTextField(
+                                value = uiState.weight,
+                                onValueChange = { weight ->
+                                    action.invoke(BMIViewModel.Action.UpdateWeight(weight))
+                                },
+                                label = { Text(stringResource(R.string.weight_label)) },
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Next
+                                ),
                                 modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center,
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            BmiScaleIndicator(imc = it)
-                            Text(
-                                text = uiState.bmiCategory.uppercase(),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                color = uiState.categoryColor?.let { color ->
-                                    colorResource(id = color)
-                                } ?: Color.Unspecified
+                            OutlinedTextField(
+                                value = uiState.height,
+                                onValueChange = { height ->
+                                    action.invoke(BMIViewModel.Action.UpdateHeight(height))
+                                },
+                                label = { Text(stringResource(R.string.height_label)) },
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    keyboardType = KeyboardType.Number,
+                                    imeAction = ImeAction.Done
+                                ),
+                                keyboardActions = KeyboardActions(
+                                    onDone = {
+                                        action.invoke(BMIViewModel.Action.Calculate)
+                                        keyboardController?.hide()
+                                    }
+                                ),
+                                modifier = Modifier.fillMaxWidth()
                             )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Button(
+                                onClick = {
+                                    action.invoke(BMIViewModel.Action.Calculate)
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(5.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.calculate_button),
+                                    fontSize = 16.sp
+                                )
+                            }
+
+                            uiState.bmi?.let {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = stringResource(R.string.imc_classification).format(it),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                BmiScaleIndicator(imc = it)
+                                Text(
+                                    text = uiState.bmiCategory.uppercase(),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    color = uiState.categoryColor?.let { color ->
+                                        colorResource(id = color)
+                                    } ?: Color.Unspecified
+                                )
+                            }
                         }
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }

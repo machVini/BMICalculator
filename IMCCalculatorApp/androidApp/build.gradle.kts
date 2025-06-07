@@ -54,15 +54,25 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             buildConfigField("String", "AD_UNIT_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             signingConfig = signingConfigs.getByName("release")
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            buildConfigField("String", "AD_UNIT_ID", "\"${project.findProperty("ADMOB_AD_UNIT_ID") ?: ""}\"")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            buildConfigField(
+                "String",
+                "AD_UNIT_ID",
+                "\"${project.findProperty("ADMOB_AD_UNIT_ID") ?: ""}\""
+            )
         }
     }
 }
@@ -79,7 +89,11 @@ dependencies {
     implementation(libs.admob)
     implementation(platform(libs.firebase.bom))
     implementation(libs.hilt.android)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
     ksp(libs.hilt.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.compose.charts)
     debugImplementation(libs.compose.ui.tooling)
 }

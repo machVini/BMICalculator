@@ -1,5 +1,9 @@
-package com.mach.apps.imccalculatorapp.android.ui
+package com.mach.apps.imccalculatorapp.android.presentation
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -9,15 +13,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.ads.MobileAds
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -40,19 +43,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val uiState by viewModel.uiState.collectAsState()
-                    BMIScreen(
-                        uiState = uiState,
-                        action = ::performAction,
-                    )
+                    MainNavigation(viewModel = viewModel)
                 }
             }
         }
     }
 
-    private fun performAction(action: BMIViewModel.Action) = viewModel.performAction(action)
-
-    private fun handleEvent(event: BMIViewModel.Event) {
+    private suspend fun handleEvent(event: BMIViewModel.Event) {
         when (event) {
             is BMIViewModel.Event.ShowResult -> {
                 // Aqui você pode mostrar um toast ou um snackbar com o resultado
@@ -70,9 +67,38 @@ class MainActivity : ComponentActivity() {
             }
 
             is BMIViewModel.Event.ShowError -> {
-                Toast.makeText(this, event.message, Toast.LENGTH_SHORT).show()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        event.message,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+                viewModel.performAction(BMIViewModel.Action.CleanFields)
+            }
+
+            is BMIViewModel.Event.OpenAppRating -> {
+                openAppRating(this)
             }
         }
+    }
+}
+
+private fun openAppRating(context: Context) {
+    try {
+        val uri = Uri.parse("market://details?id=com.mach.apps.imccalculatorapp.android")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        val uri =
+            Uri.parse("https://play.google.com/store/apps/details?id=com.mach.apps.imccalculatorapp.android")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        Toast.makeText(context, "Erro ao abrir a loja de aplicativos", Toast.LENGTH_SHORT).show()
     }
 }
 
