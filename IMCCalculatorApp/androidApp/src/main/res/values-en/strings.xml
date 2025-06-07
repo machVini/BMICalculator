@@ -45,7 +45,7 @@
     <string name="november">Nov</string>
     <string name="december">Dec</string>
 
-    <string name="date_pattern">MM dd yyyy</string>
+    <string name="date_pattern">MMMM dd, yyyy</string>
 
     <string name="ad_banner_button_text">Nice Job!</string>
 </resources>
