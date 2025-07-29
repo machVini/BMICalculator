@@ -1,29 +1,16 @@
 package com.mach.apps.imccalculatorapp.android.di
 
-import android.content.Context
+import com.google.ai.client.generativeai.GenerativeModel
 import com.mach.apps.imccalculatorapp.IMCCalculator
-import com.mach.apps.imccalculatorapp.android.data.BMIDatabase
-import com.mach.apps.imccalculatorapp.android.data.dao.BMIRecordDao
-import com.mach.apps.imccalculatorapp.android.data.repository.BMIRepository
-import com.mach.apps.imccalculatorapp.android.util.AndroidResourceProvider
-import com.mach.apps.imccalculatorapp.android.util.ResourceProvider
+import com.mach.apps.imccalculatorapp.android.BuildConfig
+import com.mach.apps.imccalculatorapp.android.core.utils.AndroidResourceProvider
+import com.mach.apps.imccalculatorapp.android.core.utils.ResourceProvider
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class ResourceModule {
-    @Binds
-    @Singleton
-    abstract fun bindResourceProvider(
-        androidResourceProvider: AndroidResourceProvider
-    ): ResourceProvider
-}
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -36,19 +23,20 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideBMIDatabase(@ApplicationContext context: Context): BMIDatabase {
-        return BMIDatabase.getDatabase(context)
+    fun provideGenerativeModel(): GenerativeModel {
+        return GenerativeModel(
+            modelName = "gemini-1.5-flash",
+            apiKey = BuildConfig.API_KEY
+        )
     }
+}
 
-    @Provides
+@Module
+@InstallIn(SingletonComponent::class)
+interface AppBindings {
+    @Binds
     @Singleton
-    fun provideBMIRecordDao(database: BMIDatabase): BMIRecordDao {
-        return database.bmiRecordDao()
-    }
-
-    @Provides
-    @Singleton
-    fun provideBMIRepository(bmiRecordDao: BMIRecordDao): BMIRepository {
-        return BMIRepository(bmiRecordDao)
-    }
+    fun bindResourceProvider(
+        androidResourceProvider: AndroidResourceProvider
+    ): ResourceProvider
 }

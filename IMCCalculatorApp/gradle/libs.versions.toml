@@ -8,11 +8,12 @@ compose-material3 = "1.3.2"
 androidx-activityCompose = "1.10.1"
 gms-ads = "24.3.0"
 gms-plugin = "4.4.2"
-firebase-bom = "33.14.0"
+firebase-bom = "34.0.0"
 lifecycle = "2.9.0"
 hilt = "2.55"
 hilt-navigation-compose = "1.2.0"
 roomRuntime = "2.7.1"
+genAi = "0.9.0"
 
 [libraries]
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
@@ -26,15 +27,17 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = 
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
-androidx-material-icons-extended = {  group = "androidx.compose.material", name = "material-icons-extended"}
+androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 admob = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "gms-ads" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
+firestore = { module = "com.google.firebase:firebase-firestore" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
-
+gen-ai = { module = "com.google.ai.client.generativeai:generativeai", version.ref = "genAi" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

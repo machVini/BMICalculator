@@ -7,6 +7,13 @@ val keystoreProperties = Properties().apply {
     }
 }
 
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        load(localPropertiesFile.inputStream())
+    }
+}
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
@@ -58,7 +65,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "AD_UNIT_ID", "\"ca-app-pub-3940256099942544/6300978111\"")
+            buildConfigField("String", "AD_UNIT_ID", "\"${localProperties["AD_UNIT_ID_DEBUG"]}\"")
+            buildConfigField("String", "API_KEY", "\"${localProperties["API_KEY"]}\"")
         }
         release {
             isMinifyEnabled = true
@@ -68,11 +76,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField(
-                "String",
-                "AD_UNIT_ID",
-                "\"${project.findProperty("ADMOB_AD_UNIT_ID") ?: ""}\""
+            buildConfigField("String", "AD_UNIT_ID", "\"${localProperties["AD_UNIT_ID_RELEASE"]}\""
             )
+            buildConfigField("String", "API_KEY", "\"${localProperties["API_KEY"]}\"")
         }
     }
 }
@@ -88,6 +94,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.admob)
     implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firestore)
+    implementation(libs.gen.ai)
     implementation(libs.hilt.android)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

@@ -48,4 +48,10 @@
     <string name="date_pattern">MMMM dd, yyyy</string>
 
     <string name="ad_banner_button_text">Nice Job!</string>
+
+    <!-- Auth Screen -->
+    <string name="auth_login_button">Login</string>
+    <string name="auth_register_button">Register</string>
+    <string name="auth_not_registered_yet_button">Don\'t have an account? Sign up</string>
+    <string name="auth_already_registered_button">Already have an account? Log in</string>
 </resources>
