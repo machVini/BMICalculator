@@ -18,9 +18,16 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.google.services)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
 }
 
 android {
@@ -43,11 +50,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        // minSdk 24 é anterior ao java.time (API 26); o desugaring o
+        // disponibiliza nas versões antigas do Android.
+        isCoreLibraryDesugaringEnabled = true
     }
     signingConfigs {
         if (keystorePropertiesFile.exists()) {
@@ -68,7 +75,6 @@ android {
                 "proguard-rules.pro"
             )
             buildConfigField("String", "AD_UNIT_ID", "\"${localProperties["AD_UNIT_ID_DEBUG"]}\"")
-            buildConfigField("String", "API_KEY", "\"${localProperties["API_KEY"]}\"")
         }
         release {
             isMinifyEnabled = true
@@ -80,27 +86,25 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "AD_UNIT_ID", "\"${localProperties["AD_UNIT_ID_RELEASE"]}\""
-            )
-            buildConfigField("String", "API_KEY", "\"${localProperties["API_KEY"]}\"")
+            buildConfigField("String", "AD_UNIT_ID", "\"${localProperties["AD_UNIT_ID_RELEASE"]}\"")
         }
     }
 }
 
 dependencies {
     implementation(projects.shared)
+    implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material3)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.admob)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
-    implementation(libs.firestore)
-    implementation(libs.gen.ai)
     implementation(libs.hilt.android)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
@@ -109,4 +113,8 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.compose.charts)
     debugImplementation(libs.compose.ui.tooling)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

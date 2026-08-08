@@ -1,18 +1,15 @@
 package com.mach.apps.imccalculatorapp.android.features.auth.presentation
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.mach.apps.imccalculatorapp.android.R
+import com.mach.apps.imccalculatorapp.android.navigation.NavigationEmitter
 import com.mach.apps.imccalculatorapp.android.navigation.NavigationEvent
 import com.mach.apps.imccalculatorapp.android.navigation.NavigationHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,8 +23,8 @@ class AuthViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _navigationEvent = MutableSharedFlow<NavigationEvent>()
-    override val navigationEvent = _navigationEvent.asSharedFlow()
+    private val navigation = NavigationEmitter()
+    override val navigationEvent = navigation.navigationEvent
 
     fun performAction(action: Action) {
         when (action) {
@@ -42,9 +39,7 @@ class AuthViewModel @Inject constructor(
     }
 
     private fun onAuthSuccess() {
-        viewModelScope.launch {
-            _navigationEvent.emit(NavigationEvent.NavigateToHome)
-        }
+        navigation.emit(NavigationEvent.NavigateToHome)
     }
 
     private fun onPrimaryButtonClick() {

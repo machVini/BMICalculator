@@ -52,6 +52,8 @@ import androidx.compose.ui.unit.sp
 import com.mach.apps.imccalculatorapp.android.R
 import com.mach.apps.imccalculatorapp.android.core.presentation.AdBanner
 import com.mach.apps.imccalculatorapp.android.core.presentation.CustomTopAppBar
+import com.mach.apps.imccalculatorapp.android.core.presentation.colorRes
+import com.mach.apps.imccalculatorapp.android.core.presentation.labelRes
 
 @Composable
 fun BMIScreen(
@@ -120,9 +122,8 @@ private fun MainContent(
                     painter = painterResource(R.drawable.ic_logo),
                     contentDescription = null,
                     modifier = Modifier.size(148.dp),
-                    tint = uiState.categoryColor?.let { color ->
-                        colorResource(id = color)
-                    } ?: Color(0xFFFBFBFB)
+                    tint = uiState.category?.let { colorResource(it.colorRes) }
+                        ?: Color(0xFFFBFBFB)
                 )
                 Card(
                     shape = RoundedCornerShape(16.dp),
@@ -187,16 +188,16 @@ private fun MainContent(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             BmiScaleIndicator(imc = it)
-                            Text(
-                                text = uiState.bmiCategory.uppercase(),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                color = uiState.categoryColor?.let { color ->
-                                    colorResource(id = color)
-                                } ?: Color.Unspecified
-                            )
+                            uiState.category?.let { category ->
+                                Text(
+                                    text = stringResource(category.labelRes).uppercase(),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    textAlign = TextAlign.Center,
+                                    color = colorResource(category.colorRes)
+                                )
+                            }
                         }
                     }
                 }

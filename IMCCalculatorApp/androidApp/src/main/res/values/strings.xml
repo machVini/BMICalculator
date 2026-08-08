@@ -3,7 +3,7 @@
     <string name="app_name">Calculadora IMC</string>
     <string name="toolbar_lable">Calculadora de IMC</string>
     <string name="weight_label">Peso (kg)</string>
-    <string name="height_label">Altura (m)</string>
+    <string name="height_label">Altura (cm)</string>
     <string name="calculate_button">Calcular IMC</string>
     <string name="imc_classification">Seu IMC é: %1$.1f</string>
     <string name="close">Fechar</string>

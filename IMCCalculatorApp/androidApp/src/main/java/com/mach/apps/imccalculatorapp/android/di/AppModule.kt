@@ -1,8 +1,6 @@
 package com.mach.apps.imccalculatorapp.android.di
 
-import com.google.ai.client.generativeai.GenerativeModel
 import com.mach.apps.imccalculatorapp.IMCCalculator
-import com.mach.apps.imccalculatorapp.android.BuildConfig
 import com.mach.apps.imccalculatorapp.android.core.utils.AndroidResourceProvider
 import com.mach.apps.imccalculatorapp.android.core.utils.ResourceProvider
 import dagger.Binds
@@ -10,6 +8,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import java.time.Clock
 import javax.inject.Singleton
 
 @Module
@@ -21,14 +20,10 @@ object AppModule {
         return IMCCalculator()
     }
 
+    /** Injetado em vez de chamar Instant.now() direto: em teste dá para fixar o relógio. */
     @Provides
     @Singleton
-    fun provideGenerativeModel(): GenerativeModel {
-        return GenerativeModel(
-            modelName = "gemini-1.5-flash",
-            apiKey = BuildConfig.API_KEY
-        )
-    }
+    fun provideClock(): Clock = Clock.systemDefaultZone()
 }
 
 @Module

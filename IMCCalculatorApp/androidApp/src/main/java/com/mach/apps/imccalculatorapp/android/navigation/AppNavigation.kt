@@ -1,11 +1,10 @@
 package com.mach.apps.imccalculatorapp.android.navigation
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,46 +22,50 @@ import com.mach.apps.imccalculatorapp.android.features.tips.presentation.TipsVie
 
 @Composable
 fun AppNavigation(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    appViewModel: AppViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
-    val items = NavigationItem.values().toList()
 
     Scaffold(
-        modifier = Modifier.navigationBarsPadding().imePadding(),
-        bottomBar = { BottomNavigationBar(navController, items) }
+        modifier = Modifier.imePadding(),
+        bottomBar = { BottomNavigationBar(navController) },
+        // Zerado de propósito: cada tela tem seu próprio Scaffold com TopAppBar,
+        // e a TopAppBar já consome o inset da barra de status. Sem isso, o
+        // recuo do topo seria aplicado duas vezes.
+        contentWindowInsets = WindowInsets(0)
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = NavigationItem.Auth.route,
+            startDestination = appViewModel.startDestination,
             modifier = modifier.padding(innerPadding),
         ) {
-            composable(NavigationItem.Auth.route) {
+            composable<AuthRoute> {
                 val viewModel: AuthViewModel = hiltViewModel()
                 NavigationHandler(navController = navController, navigationHandler = viewModel)
                 AuthScreen(
-                    uiState = viewModel.uiState.collectAsState().value,
+                    uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
                     authState = viewModel.authState.collectAsStateWithLifecycle().value,
                     action = viewModel::performAction
                 )
             }
-            composable(NavigationItem.Home.route) {
+            composable<HomeRoute> {
                 val viewModel: BMIViewModel = hiltViewModel()
                 NavigationHandler(navController = navController, navigationHandler = viewModel)
                 BMIScreen(
-                    uiState = viewModel.uiState.collectAsState().value,
+                    uiState = viewModel.uiState.collectAsStateWithLifecycle().value,
                     action = viewModel::performAction
                 )
             }
-            composable(NavigationItem.History.route) {
+            composable<HistoryRoute> {
                 val viewModel: HistoryViewModel = hiltViewModel()
                 NavigationHandler(navController = navController, navigationHandler = viewModel)
                 HistoryScreen(
-                    bmiHistory = viewModel.uiState.collectAsState().value.records,
+                    bmiHistory = viewModel.uiState.collectAsStateWithLifecycle().value.records,
                     action = viewModel::performAction,
                 )
             }
-            composable(NavigationItem.Tips.route) {
+            composable<TipsRoute> {
                 val viewModel: TipsViewModel = hiltViewModel()
                 NavigationHandler(navController = navController, navigationHandler = viewModel)
                 TipsScreen(
@@ -72,4 +75,3 @@ fun AppNavigation(
         }
     }
 }
-

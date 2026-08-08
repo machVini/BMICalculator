@@ -1,6 +1,7 @@
 package com.mach.apps.imccalculatorapp.android.features.history.presentation
 
 import android.annotation.SuppressLint
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,16 +35,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.mach.apps.imccalculatorapp.NORMAL_WEIGHT
-import com.mach.apps.imccalculatorapp.OBESITY_1
-import com.mach.apps.imccalculatorapp.OBESITY_2
-import com.mach.apps.imccalculatorapp.OBESITY_3
-import com.mach.apps.imccalculatorapp.OVERWEIGHT
-import com.mach.apps.imccalculatorapp.UNDERWEIGHT
+import com.mach.apps.imccalculatorapp.BmiCategory
 import com.mach.apps.imccalculatorapp.android.R
 import com.mach.apps.imccalculatorapp.android.core.presentation.AdBanner
 import com.mach.apps.imccalculatorapp.android.core.presentation.CustomTopAppBar
-import com.mach.apps.imccalculatorapp.android.features.bmi.data.entity.BMIRecord
+import com.mach.apps.imccalculatorapp.android.core.presentation.colorRes
+import com.mach.apps.imccalculatorapp.android.core.presentation.labelRes
+import com.mach.apps.imccalculatorapp.android.features.bmi.domain.model.BmiEntry
 import me.bytebeats.views.charts.bar.BarChart
 import me.bytebeats.views.charts.bar.BarChartData
 import me.bytebeats.views.charts.bar.render.bar.SimpleBarDrawer
@@ -51,13 +49,15 @@ import me.bytebeats.views.charts.bar.render.label.SimpleLabelDrawer
 import me.bytebeats.views.charts.bar.render.xaxis.SimpleXAxisDrawer
 import me.bytebeats.views.charts.bar.render.yaxis.SimpleYAxisDrawer
 import me.bytebeats.views.charts.simpleChartAnimation
-import java.text.SimpleDateFormat
+import java.time.Month
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
 fun HistoryScreen(
     modifier: Modifier = Modifier,
-    bmiHistory: List<BMIRecord>,
+    bmiHistory: List<BmiEntry>,
     action: (HistoryViewModel.Action) -> Unit,
 ) {
     Scaffold(
@@ -94,7 +94,7 @@ fun HistoryScreen(
 fun Content(
     modifier: Modifier = Modifier,
     padding: PaddingValues,
-    bmiHistory: List<BMIRecord>,
+    bmiHistory: List<BmiEntry>,
     action: (HistoryViewModel.Action) -> Unit,
 ) {
     LazyColumn(
@@ -136,10 +136,12 @@ fun FallBackContent(
 
 @SuppressLint("DefaultLocale")
 @Composable
-fun HistoryItem(record: BMIRecord) {
-    val context = LocalContext.current
-    val dateFormatter =
-        remember { SimpleDateFormat(context.getString(R.string.date_pattern), Locale.getDefault()) }
+fun HistoryItem(record: BmiEntry) {
+    val pattern = stringResource(R.string.date_pattern)
+    val dateFormatter = remember(pattern) {
+        DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
+            .withZone(ZoneId.systemDefault())
+    }
 
     Card(
         modifier = Modifier
@@ -171,29 +173,24 @@ fun HistoryItem(record: BMIRecord) {
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
-                        text = String.format(" %.1f", record.bmiValue),
+                        text = String.format(" %.1f", record.value),
                         style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "(${translatedCategory(record.category)})",
+                        text = "(${stringResource(record.category.labelRes)})",
                         style = MaterialTheme.typography.titleMedium,
-                        color = when (record.category.lowercase()) {
-                            NORMAL_WEIGHT -> colorResource(R.color.normal_weight)
-                            OVERWEIGHT -> colorResource(R.color.overweight)
-                            UNDERWEIGHT -> colorResource(R.color.underweight)
-                            else -> colorResource(R.color.obesity_1)
-                        }
+                        color = colorResource(record.category.colorRes)
                     )
                 }
             }
             Column(verticalArrangement = Arrangement.Center) {
                 Text(
-                    text = "${String.format("%.0f", record.weight)}kg / ${
+                    text = "${String.format("%.0f", record.weightKg)}kg / ${
                         String.format(
                             "%.0f",
-                            record.height
+                            record.heightCm
                         )
                     }cm",
                     style = MaterialTheme.typography.labelLarge,
@@ -204,48 +201,42 @@ fun HistoryItem(record: BMIRecord) {
     }
 }
 
-@Composable
-private fun translatedCategory(category: String): String {
-    return when (category) {
-        UNDERWEIGHT -> stringResource(R.string.underweight)
-        NORMAL_WEIGHT -> stringResource(R.string.normal_weight)
-        OVERWEIGHT -> stringResource(R.string.overweight)
-        OBESITY_1 -> stringResource(R.string.obesity_1)
-        OBESITY_2 -> stringResource(R.string.obesity_2)
-        OBESITY_3 -> stringResource(R.string.obesity_3)
-        else -> ""
+@get:StringRes
+private val Month.labelRes: Int
+    get() = when (this) {
+        Month.JANUARY -> R.string.january
+        Month.FEBRUARY -> R.string.february
+        Month.MARCH -> R.string.march
+        Month.APRIL -> R.string.april
+        Month.MAY -> R.string.may
+        Month.JUNE -> R.string.june
+        Month.JULY -> R.string.july
+        Month.AUGUST -> R.string.august
+        Month.SEPTEMBER -> R.string.september
+        Month.OCTOBER -> R.string.october
+        Month.NOVEMBER -> R.string.november
+        Month.DECEMBER -> R.string.december
     }
-}
 
 @Composable
 fun BarChartView(
-    bmiHistory: List<BMIRecord>
+    bmiHistory: List<BmiEntry>
 ) {
     BarChart(
         barChartData = BarChartData(
             bars = bmiHistory.map {
                 BarChartData.Bar(
-                    value = it.bmiValue,
-                    label = when (it.date.month) {
-                        0 -> stringResource(R.string.january)
-                        1 -> stringResource(R.string.february)
-                        2 -> stringResource(R.string.march)
-                        3 -> stringResource(R.string.april)
-                        4 -> stringResource(R.string.may)
-                        5 -> stringResource(R.string.june)
-                        6 -> stringResource(R.string.july)
-                        7 -> stringResource(R.string.august)
-                        8 -> stringResource(R.string.september)
-                        9 -> stringResource(R.string.october)
-                        10 -> stringResource(R.string.november)
-                        11 -> stringResource(R.string.december)
-                        else -> ""
-                    },
-                    color = when (it.category.lowercase()) {
-                        NORMAL_WEIGHT -> Color(0xFFBFFCC6)
-                        OVERWEIGHT -> Color(0xFFFFF5BA)
-                        UNDERWEIGHT -> Color(0xFFACE7FF)
-                        else -> Color(0xFFFFABAB)
+                    value = it.value,
+                    label = stringResource(
+                        it.date.atZone(ZoneId.systemDefault()).month.labelRes
+                    ),
+                    color = when (it.category) {
+                        BmiCategory.NORMAL_WEIGHT -> Color(0xFFBFFCC6)
+                        BmiCategory.OVERWEIGHT -> Color(0xFFFFF5BA)
+                        BmiCategory.UNDERWEIGHT -> Color(0xFFACE7FF)
+                        BmiCategory.OBESITY_1,
+                        BmiCategory.OBESITY_2,
+                        BmiCategory.OBESITY_3 -> Color(0xFFFFABAB)
                     }
                 )
             },

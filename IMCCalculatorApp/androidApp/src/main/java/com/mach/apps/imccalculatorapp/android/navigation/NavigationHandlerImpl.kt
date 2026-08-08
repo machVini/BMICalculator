@@ -7,6 +7,9 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 
 @Composable
@@ -14,30 +17,34 @@ fun NavigationHandler(
     navController: NavHostController,
     navigationHandler: NavigationHandler
 ) {
-    LaunchedEffect(Unit) {
-        navigationHandler.navigationEvent.collect { event ->
-            when (event) {
-                NavigationEvent.NavigateToHistory -> navController.navigateWithSaveState(
-                    NavigationItem.History.route
-                )
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-                NavigationEvent.NavigateToTips -> navController.navigateWithSaveState(
-                    NavigationItem.Tips.route
-                )
+    LaunchedEffect(navigationHandler, lifecycleOwner) {
+        // repeatOnLifecycle evita navegar com o app em background:
+        // a coleta pausa em onStop e retoma em onStart.
+        lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            navigationHandler.navigationEvent.collect { event ->
+                when (event) {
+                    NavigationEvent.NavigateToHistory ->
+                        navController.navigateWithSaveState(HistoryRoute)
 
-                NavigationEvent.NavigateToHome -> navController.navigateWithSaveState(
-                    NavigationItem.Home.route
-                )
+                    NavigationEvent.NavigateToTips ->
+                        navController.navigateWithSaveState(TipsRoute)
 
-                is NavigationEvent.NavigateBack -> event.route?.let {
-                    navController.navigate(it)
-                } ?: navController.navigateUp()
+                    NavigationEvent.NavigateToHome ->
+                        navController.navigateWithSaveState(HomeRoute)
 
-                NavigationEvent.NavigateToAppRating -> openAppRating(context = navController.context)
-                is NavigationEvent.ShowError -> makeToastError(
-                    context = navController.context,
-                    message = event.message
-                )
+                    NavigationEvent.NavigateBack -> navController.navigateUp()
+
+                    NavigationEvent.NavigateToAppRating -> openAppRating(
+                        context = navController.context
+                    )
+
+                    is NavigationEvent.ShowError -> makeToastError(
+                        context = navController.context,
+                        message = event.message
+                    )
+                }
             }
         }
     }
