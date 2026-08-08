@@ -1,9 +1,9 @@
 import java.util.Properties
 
+val keystorePropertiesFile = rootProject.file("androidApp/keystore.properties")
 val keystoreProperties = Properties().apply {
-    val keystoreFile = rootProject.file("androidApp/keystore.properties")
-    if (keystoreFile.exists()) {
-        load(keystoreFile.inputStream())
+    if (keystorePropertiesFile.exists()) {
+        load(keystorePropertiesFile.inputStream())
     }
 }
 
@@ -25,13 +25,13 @@ plugins {
 
 android {
     namespace = "com.mach.apps.imccalculatorapp.android"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         applicationId = "com.mach.apps.imccalculatorapp.android"
         minSdk = 24
-        targetSdk = 35
-        versionCode = 3
-        versionName = "1.1.0"
+        targetSdk = 36
+        versionCode = 4
+        versionName = "1.2.0"
     }
     buildFeatures {
         compose = true
@@ -50,11 +50,13 @@ android {
         jvmTarget = "1.8"
     }
     signingConfigs {
-        create("release") {
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+            }
         }
     }
 
@@ -71,7 +73,9 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("release")
+            if (keystorePropertiesFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

@@ -2,6 +2,7 @@ package com.mach.apps.imccalculatorapp.android.features.auth.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.mach.apps.imccalculatorapp.android.R
 import com.mach.apps.imccalculatorapp.android.navigation.NavigationEvent
 import com.mach.apps.imccalculatorapp.android.navigation.NavigationHandler
@@ -15,7 +16,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor() : ViewModel(), NavigationHandler {
+class AuthViewModel @Inject constructor(
+    private val firebaseAuth: FirebaseAuth
+) : ViewModel(), NavigationHandler {
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState = _authState.asStateFlow()
@@ -71,7 +74,18 @@ class AuthViewModel @Inject constructor() : ViewModel(), NavigationHandler {
     }
 
     private fun loginUser(email: String, password: String) {
-        TODO("Not yet implemented")
+        if (email.isBlank() || password.isBlank()) {
+            _authState.value = AuthState.Error("Preencha e-mail e senha")
+            return
+        }
+        _authState.value = AuthState.Loading
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                _authState.value = AuthState.Success
+            }
+            .addOnFailureListener { exception ->
+                _authState.value = AuthState.Error(exception.localizedMessage ?: "Falha ao entrar")
+            }
     }
 
     private fun registerUser(
@@ -80,7 +94,18 @@ class AuthViewModel @Inject constructor() : ViewModel(), NavigationHandler {
         age: String,
         activityLevel: String
     ) {
-        TODO("Not yet implemented")
+        if (email.isBlank() || password.isBlank()) {
+            _authState.value = AuthState.Error("Preencha e-mail e senha")
+            return
+        }
+        _authState.value = AuthState.Loading
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                _authState.value = AuthState.Success
+            }
+            .addOnFailureListener { exception ->
+                _authState.value = AuthState.Error(exception.localizedMessage ?: "Falha ao cadastrar")
+            }
     }
 
     private fun onEmailChange(email: String) {
