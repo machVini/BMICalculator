@@ -1,6 +1,7 @@
 # Gradle files
 .gradle/
 build/
+.kotlin/
 local.properties
 
 # IntelliJ IDEA / Android Studio

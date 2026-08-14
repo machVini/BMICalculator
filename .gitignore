@@ -1,0 +1,9 @@
+# Este repositório é o do app Calculadora IMC.
+# As entradas abaixo são coisas que convivem na mesma pasta mas não fazem
+# parte dele — sem isso, um `git add -A` na raiz as arrastaria para o histórico.
+
+# Material de estudo (275 MB — acima do limite de 100 MB do GitHub)
+mc458.zip
+
+# Projeto separado, com repositório git próprio
+Repostinho/
