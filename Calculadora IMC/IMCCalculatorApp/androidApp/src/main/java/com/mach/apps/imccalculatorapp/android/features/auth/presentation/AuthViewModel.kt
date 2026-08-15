@@ -35,6 +35,7 @@ class AuthViewModel @Inject constructor(
             is Action.OnAuthSuccess -> onAuthSuccess()
             is Action.OnPrimaryButtonClick -> onPrimaryButtonClick()
             is Action.OnSecondaryButtonClick -> onSecondaryButtonClick()
+            is Action.OnBackClick -> navigation.emit(NavigationEvent.NavigateBack)
         }
     }
 
@@ -127,6 +128,7 @@ class AuthViewModel @Inject constructor(
         data object OnAuthSuccess : Action()
         data object OnPrimaryButtonClick : Action()
         data object OnSecondaryButtonClick : Action()
+        data object OnBackClick : Action()
     }
 
     sealed class AuthState {

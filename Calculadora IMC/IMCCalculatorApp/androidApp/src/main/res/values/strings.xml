@@ -49,6 +49,9 @@
     <string name="ad_banner_button_text">Bom Trabalho!</string>
 
     <!-- Auth Screen -->
+    <string name="auth_screen_title">Conta</string>
+    <string name="auth_open_account">Abrir conta</string>
+    <string name="auth_back">Voltar</string>
     <string name="auth_login_button">Entrar</string>
     <string name="auth_register_button">Cadastrar</string>
     <string name="auth_not_registered_yet_button">Não tem conta? Registre-se</string>

@@ -7,10 +7,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -19,6 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mach.apps.imccalculatorapp.android.R
+import com.mach.apps.imccalculatorapp.android.core.presentation.CustomTopAppBar
 
 @Composable
 fun AuthScreen(
@@ -34,9 +41,27 @@ fun AuthScreen(
         }
     }
 
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            CustomTopAppBar(
+                title = stringResource(R.string.auth_screen_title),
+                navigationIcon = {
+                    IconButton(onClick = { action.invoke(AuthViewModel.Action.OnBackClick) }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.auth_back),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+            )
+        }
+    ) { padding ->
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(padding)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -107,5 +132,6 @@ fun AuthScreen(
         ) {
             Text(stringResource(uiState.secondaryButtonRes))
         }
+    }
     }
 }

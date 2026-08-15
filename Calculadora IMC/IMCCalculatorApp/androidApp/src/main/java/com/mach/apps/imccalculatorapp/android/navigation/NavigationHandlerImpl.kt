@@ -34,6 +34,10 @@ fun NavigationHandler(
                     NavigationEvent.NavigateToHome ->
                         navController.navigateWithSaveState(HomeRoute)
 
+                    // navigate simples, não navigateWithSaveState: a conta é um
+                    // desvio a partir da calculadora, e o usuário volta com "voltar".
+                    NavigationEvent.NavigateToAuth -> navController.navigate(AuthRoute)
+
                     NavigationEvent.NavigateBack -> navController.navigateUp()
 
                     NavigationEvent.NavigateToAppRating -> openAppRating(

@@ -41,6 +41,7 @@ class BMIViewModel @Inject constructor(
             is Action.UpdateWeight -> updateWeight(action.weight)
             is Action.UpdateHeight -> updateHeight(action.height)
             is Action.Calculate -> calculateBMI()
+            is Action.OpenAccount -> navigation.emit(NavigationEvent.NavigateToAuth)
         }
     }
 
@@ -121,6 +122,7 @@ class BMIViewModel @Inject constructor(
         data class UpdateWeight(val weight: String) : Action()
         data class UpdateHeight(val height: String) : Action()
         data object Calculate : Action()
+        data object OpenAccount : Action()
     }
 
     data class UiState(

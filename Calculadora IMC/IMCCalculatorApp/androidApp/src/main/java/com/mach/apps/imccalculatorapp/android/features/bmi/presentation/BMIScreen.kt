@@ -19,11 +19,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -99,7 +101,18 @@ private fun MainContent(
 
     Scaffold(
         topBar = {
-            CustomTopAppBar(title = stringResource(R.string.toolbar_lable))
+            CustomTopAppBar(
+                title = stringResource(R.string.toolbar_lable),
+                actions = {
+                    IconButton(onClick = { action.invoke(BMIViewModel.Action.OpenAccount) }) {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = stringResource(R.string.auth_open_account),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+            )
         },
         containerColor = Color.Transparent,
         bottomBar = {

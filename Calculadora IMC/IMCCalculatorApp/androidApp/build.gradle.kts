@@ -37,7 +37,7 @@ android {
         applicationId = "com.mach.apps.imccalculatorapp.android"
         minSdk = 24
         targetSdk = 36
-        versionCode = 4
+        versionCode = 5
         versionName = "1.2.0"
     }
     buildFeatures {

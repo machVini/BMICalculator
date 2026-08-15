@@ -22,8 +22,7 @@ import com.mach.apps.imccalculatorapp.android.features.tips.presentation.TipsVie
 
 @Composable
 fun AppNavigation(
-    modifier: Modifier = Modifier,
-    appViewModel: AppViewModel = hiltViewModel()
+    modifier: Modifier = Modifier
 ) {
     val navController = rememberNavController()
 
@@ -37,7 +36,10 @@ fun AppNavigation(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = appViewModel.startDestination,
+            // A calculadora é a tela inicial: o app funciona por inteiro sem
+            // conta, então exigir login na abertura era barreira sem
+            // contrapartida — e foi o que travou a revisão do Play Console.
+            startDestination = HomeRoute,
             modifier = modifier.padding(innerPadding),
         ) {
             composable<AuthRoute> {

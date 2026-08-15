@@ -50,6 +50,9 @@
     <string name="ad_banner_button_text">Nice Job!</string>
 
     <!-- Auth Screen -->
+    <string name="auth_screen_title">Account</string>
+    <string name="auth_open_account">Open account</string>
+    <string name="auth_back">Back</string>
     <string name="auth_login_button">Login</string>
     <string name="auth_register_button">Register</string>
     <string name="auth_not_registered_yet_button">Don\'t have an account? Sign up</string>
